@@ -3,3 +3,5 @@
 Deploy this worker to Cloudflare Worker and replace hostname in image url to worker url and it should be ready to go.
 
 To create Cloudflare Worker please [follow this guide](https://developers.cloudflare.com/workers/get-started/guide/)
+
+Duplicate `wrangler.example.toml` and replace worker name and `IMG_HOST` before deploy
