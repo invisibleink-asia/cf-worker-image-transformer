@@ -24,55 +24,75 @@ export default {
  */
 async function handleRequest(request, env) {
   // Parse request URL to get access to query string
-  let url = new URL(request.url);
-	let pathFragments = url.pathname.split('/');
-	let filename = String( pathFragments.slice(-1) );
+  let imageURL = '';
+  let options = {};
 
-	let regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
-	let dimension = regex.exec(filename);
+  if ( request.url === '/favicon.ico' ) {
+    imageURL = `${env.IMG_HOST}/favicon.ico`;
+  } else {
+    let url = new URL(request.url);
+    let pathFragments = url.pathname.split('/');
+    let filename = String( pathFragments.slice(-1) );
 
-	pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
+    let regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
+    let dimension = regex.exec(filename);
+    let realFilename = '';
 
-	url.hostname = env.IMG_HOST;
-	url.pathname = pathFragments.join('/');
+    if ( dimension !== null ) {
+      realFilename = dimension[1];
 
-	// return new Response( url.toString() );
-
-  // Cloudflare-specific options are in the cf object.
-  let options = { cf: { image: {} } };
-
-	options.cf.image.quality = 85;
-
-	if ( dimension ) {
-		options.cf.image.width = dimension[2];
-		options.cf.image.height = dimension[3];
-	}
-
-  // Your Worker is responsible for automatic format negotiation. Check the Accept header.
-  const accept = request.headers.get("Accept");
-
-  if (/image\/avif/.test(accept)) {
-    options.cf.image.format = 'avif';
-  } else if (/image\/webp/.test(accept)) {
-    options.cf.image.format = 'webp';
-  }
-
-  // Get URL of the original (full size) image to resize.
-  // You could adjust the URL here, e.g., prefix it with a fixed address of your server,
-  // so that user-visible URLs are shorter and cleaner.
-  const imageURL = url.toString();
-
-  try {
-    // TODO: Customize validation logic
-    const { pathname } = new URL(imageURL);
-
-    // Optionally, only allow URLs with JPEG, PNG, GIF, or WebP file extensions
-    // @see https://developers.cloudflare.com/images/url-format#supported-formats-and-limitations
-    if (!/\.(jpe?g|png|gif|webp)$/i.test(pathname)) {
-      return new Response('Disallowed file extension', { status: 400 })
+      pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
     }
-  } catch (err) {
-    return new Response('Invalid "image" value', { status: 400 })
+
+    console.log(pathFragments)
+    console.log(realFilename)
+
+
+
+    console.log(pathFragments)
+
+    url.hostname = env.IMG_HOST;
+    url.pathname = pathFragments.join('/');
+
+    // return new Response( url.toString() );
+
+    // Cloudflare-specific options are in the cf object.
+    options = { cf: { image: {} } };
+
+    options.cf.image.quality = 85;
+
+    if ( dimension ) {
+      options.cf.image.width = dimension[2];
+      options.cf.image.height = dimension[3];
+    }
+
+    // Your Worker is responsible for automatic format negotiation. Check the Accept header.
+    const accept = request.headers.get("Accept");
+
+    if (/image\/avif/.test(accept)) {
+      options.cf.image.format = 'avif';
+    } else if (/image\/webp/.test(accept)) {
+      options.cf.image.format = 'webp';
+    }
+
+    // Get URL of the original (full size) image to resize.
+    // You could adjust the URL here, e.g., prefix it with a fixed address of your server,
+    // so that user-visible URLs are shorter and cleaner.
+    imageURL = url.toString();
+
+    try {
+      // TODO: Customize validation logic
+      const { pathname } = new URL(imageURL);
+
+      // Optionally, only allow URLs with JPEG, PNG, GIF, or WebP file extensions
+      // @see https://developers.cloudflare.com/images/url-format#supported-formats-and-limitations
+
+      if (!/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(pathname)) {
+        return new Response('Disallowed file extension', { status: 400 })
+      }
+    } catch (err) {
+      return new Response('Invalid "image" value', { status: 404 })
+    }
   }
 
   // Build a request that passes through request headers
