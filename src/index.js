@@ -10,13 +10,18 @@
 
 export default {
   async fetch( request, env, ctx ) {
-    return handleRequest(request, env);
+    const response = await handleRequest(request, env);
+
+    const newResponse = new Response(response.body, response);
+
+    newResponse.headers.append(
+      "x-workers-hello",
+      "WP63"
+    );
+
+    return newResponse;
   },
 };
-
-// addEventListener("fetch", event => {
-//   event.respondWith(handleRequest(event.request))
-// })
 
 /**
  * Fetch and log a request
@@ -28,7 +33,7 @@ async function handleRequest(request, env) {
   let options = {};
 
   if ( request.url === '/favicon.ico' ) {
-    imageURL = `${env.IMG_HOST}/favicon.ico`;
+    return request;
   } else {
     let url = new URL(request.url);
     let pathFragments = url.pathname.split('/');
@@ -43,13 +48,6 @@ async function handleRequest(request, env) {
 
       pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
     }
-
-    console.log(pathFragments)
-    console.log(realFilename)
-
-
-
-    console.log(pathFragments)
 
     url.hostname = env.IMG_HOST;
     url.pathname = pathFragments.join('/');
@@ -88,10 +86,11 @@ async function handleRequest(request, env) {
       // @see https://developers.cloudflare.com/images/url-format#supported-formats-and-limitations
 
       if (!/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(pathname)) {
-        return new Response('Disallowed file extension', { status: 400 })
+        // return new Response('Disallowed file extension', { status: 400 })
+        return request;
       }
     } catch (err) {
-      return new Response('Invalid "image" value', { status: 404 })
+      return new Response('Invalid "image" value', { status: 404 });
     }
   }
 
