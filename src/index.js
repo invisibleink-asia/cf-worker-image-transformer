@@ -55,7 +55,13 @@ async function handleRequest(request, env) {
     // return new Response( url.toString() );
 
     // Cloudflare-specific options are in the cf object.
-    options = { cf: { image: {} } };
+    options = {
+      cf: {
+        image: {}
+      },
+      cacheTtl: 86400,
+      cacheEverything: true,
+    };
 
     options.cf.image.quality = 85;
 
