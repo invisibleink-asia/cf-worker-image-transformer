@@ -10,14 +10,20 @@
 
 export default {
   async fetch( request, env, ctx ) {
-    const response = await handleRequest(request, env);
+    let cache = caches.default;
+
+    const cacheKey = new Request(request.url, request);
+
+    let response = await cache.match(cacheKey);
+
+    if ( !response ) {
+      response = await handleRequest(request, env);
+    }
 
     const newResponse = new Response(response.body, response);
 
-    newResponse.headers.append(
-      "x-workers-hello",
-      "WP63"
-    );
+    newResponse.headers.append( "x-workers-hello", "WP63" );
+    newResponse.headers.append( "Cache-Control", "86400" );
 
     return newResponse;
   },
