@@ -5,6 +5,8 @@ Duplicate `wrangler.example.toml` and replace worker name and `IMG_HOST` before 
 * To create Cloudflare Worker please [follow this guide](https://developers.cloudflare.com/workers/get-started/guide/)
 * You should predefine Image Variants for each size exists on your website. please [follow this guide](https://developers.cloudflare.com/images/manage-images/create-variants/)
 
+This Worker will look for original image even user requested a resized image (`image-300x200.jpg` for example). So all the resized image can be deleted. Maybe find a way to prevent resizing as well.
+
 # How I set up this thing
 
 I use Cloudways as WordPress hosting. I added two domains for my website. for example:
