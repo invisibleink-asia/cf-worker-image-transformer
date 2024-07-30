@@ -48,6 +48,8 @@ async function handleRequest(request, env) {
     if (!/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url.pathname)) {
       const passthroughUrl = `${env.IMG_HOST}${request.url}`;
 
+      console.log({passthroughUrl})
+
       return fetch(passthroughUrl, {
         cacheTtl: 86400,
         cacheEverything: true,
