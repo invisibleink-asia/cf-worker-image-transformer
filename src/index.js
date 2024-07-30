@@ -36,7 +36,7 @@ export default {
 async function handleRequest(request, env) {
   // Parse request URL to get access to query string
   const url = new URL(request.url);
-  const options = {};
+  let options = {};
 
   url.hostname = env.IMG_HOST;
 
