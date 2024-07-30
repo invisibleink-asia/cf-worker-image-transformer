@@ -36,7 +36,7 @@ export default {
 async function handleRequest(request, env) {
   // Parse request URL to get access to query string
   const url = new URL(request.url);
-  let options = {};
+  const options = {};
 
   url.hostname = env.IMG_HOST;
 
@@ -64,13 +64,12 @@ async function handleRequest(request, env) {
     url.pathname = pathFragments.join('/');
 
     // Cloudflare-specific options are in the cf object.
-    options = {
-      cf: {
-        image: {}
-      },
-      cacheTtl: 86400,
-      cacheEverything: true,
+    options.cacheTtl = 86400;
+    options.cacheEverything = true;
+    options.cf = {
+      image: {}
     };
+
 
     options.cf.image.quality = 85;
 
