@@ -35,30 +35,24 @@ export default {
  */
 async function handleRequest(request, env) {
   // Parse request URL to get access to query string
-  let imageURL = '';
-  let options = {};
+  const url = new URL(request.url);
+  const options = {};
 
-  if ( request.url === '/favicon.ico' ) {
-    return request;
+  url.hostname = env.IMG_HOST;
+
+  if ( !/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url.pathname) ) {
+    return fetch( url.toString() , {
+      cacheTtl: 86400,
+      cacheEverything: true,
+    });
   } else {
-    let url = new URL(request.url);
-    let pathFragments = url.pathname.split('/');
-    let filename = String( pathFragments.slice(-1) );
+    const pathFragments = url.pathname.split('/');
+    const filename = String( pathFragments.slice(-1) );
+    const regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
+    const dimension = regex.exec(filename);
 
-    if (!/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url.pathname)) {
-      const passthroughUrl = `${env.IMG_HOST}${request.url}`;
-
-      console.log({passthroughUrl})
-
-      return fetch(passthroughUrl, {
-        cacheTtl: 86400,
-        cacheEverything: true,
-      });
-    }
-
-    let regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
-    let dimension = regex.exec(filename);
     let realFilename = '';
+    let imageURL = '';
 
     if ( dimension !== null ) {
       realFilename = dimension[1];
@@ -66,7 +60,7 @@ async function handleRequest(request, env) {
       pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
     }
 
-    url.hostname = env.IMG_HOST;
+
     url.pathname = pathFragments.join('/');
 
     // Cloudflare-specific options are in the cf object.
