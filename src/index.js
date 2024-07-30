@@ -45,53 +45,46 @@ async function handleRequest(request, env) {
       cacheTtl: 86400,
       cacheEverything: true,
     });
-  } else {
-    const pathFragments = url.pathname.split('/');
-    const filename = String( pathFragments.slice(-1) );
-    const regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
-    const dimension = regex.exec(filename);
-
-    let realFilename = '';
-    let imageURL = '';
-
-    if ( dimension !== null ) {
-      realFilename = dimension[1];
-
-      pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
-    }
-
-
-    url.pathname = pathFragments.join('/');
-
-    // Cloudflare-specific options are in the cf object.
-    options.cacheTtl = 86400;
-    options.cacheEverything = true;
-    options.cf = {
-      image: {}
-    };
-
-
-    options.cf.image.quality = 85;
-
-    if ( dimension ) {
-      options.cf.image.width = dimension[2];
-      options.cf.image.height = dimension[3];
-    }
-
-    const accept = request.headers.get("Accept");
-
-    if (/image\/avif/.test(accept)) {
-      options.cf.image.format = 'avif';
-    } else if (/image\/webp/.test(accept)) {
-      options.cf.image.format = 'webp';
-    }
-
-    imageURL = url.toString();
   }
 
-  const imageRequest = new Request(imageURL, {
+  const pathFragments = url.pathname.split('/');
+  const filename = String( pathFragments.slice(-1) );
+  const regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
+  const dimension = regex.exec(filename);
+
+  if ( dimension !== null ) {
+    pathFragments[pathFragments.length - 1] = filename.replace(dimension[1], '');
+  }
+
+  url.pathname = pathFragments.join('/');
+
+  // Cloudflare-specific options are in the cf object.
+  options.cacheTtl = 86400;
+  options.cacheEverything = true;
+  options.cf = {
+    image: {}
+  };
+
+  options.cf.image.quality = 85;
+
+  if ( dimension ) {
+    options.cf.image.width = dimension[2];
+    options.cf.image.height = dimension[3];
+  }
+
+  const accept = request.headers.get("Accept");
+
+  if ( /image\/avif/.test(accept) ) {
+    options.cf.image.format = 'avif';
+  } else if ( /image\/webp/.test(accept) ) {
+    options.cf.image.format = 'webp';
+  }
+
+  const imageURL = url.toString();
+
+  const imageRequest = new Request( imageURL, {
     headers: request.headers
-  })
+  } );
 
   return fetch(imageRequest, options);
 }
