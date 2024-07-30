@@ -46,7 +46,12 @@ async function handleRequest(request, env) {
     let filename = String( pathFragments.slice(-1) );
 
     if (!/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url.pathname)) {
-      return request;
+      const passthroughUrl = `${env.IMG_HOST}${request.url}`;
+
+      return fetch(passthroughUrl, {
+        cacheTtl: 86400,
+        cacheEverything: true,
+      });
     }
 
     let regex = /(-([0-9]*)x([0-9]*)).[A-z]*$/g;
@@ -61,8 +66,6 @@ async function handleRequest(request, env) {
 
     url.hostname = env.IMG_HOST;
     url.pathname = pathFragments.join('/');
-
-    // return new Response( url.toString() );
 
     // Cloudflare-specific options are in the cf object.
     options = {
