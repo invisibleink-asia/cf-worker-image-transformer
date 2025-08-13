@@ -82,9 +82,12 @@ async function handleRequest(request, env) {
     options.cf.image.format = 'webp';
   }
 
-  console.log(`convert to ${options.cf.image.format}`)
+
 
   const imageURL = url.toString();
+
+  console.log(`target ${imageURL}`)
+  console.log(`convert to ${options.cf.image.format}`)
 
   const imageRequest = new Request( imageURL, {
     headers: request.headers

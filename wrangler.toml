@@ -9,3 +9,4 @@ IMG_HOST = "static.monsoontea.co.th"
 
 [observability.logs]
 enabled = true
+invocation_logs = false
