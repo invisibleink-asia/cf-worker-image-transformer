@@ -10,15 +10,17 @@
 
 export default {
   async fetch( request, env, ctx ) {
-    let cache = caches.default;
+    // let cache = caches.default;
 
-    const cacheKey = new Request(request.url, request);
+    // const cacheKey = new Request(request.url, request);
 
-    let response = await cache.match(cacheKey);
+    // let response = await cache.match(cacheKey);
 
-    if ( !response ) {
-      response = await handleRequest(request, env);
-    }
+    // if ( !response ) {
+    //   response = await handleRequest(request, env);
+    // }
+
+    let response = await handleRequest(request, env);
 
     const newResponse = new Response(response.body, response);
 
@@ -67,7 +69,7 @@ async function handleRequest(request, env) {
     image: {}
   };
 
-  options.cf.image.quality = 85;
+  options.cf.image.quality = 90;
 
   if ( dimension ) {
     options.cf.image.width = dimension[2];
