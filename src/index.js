@@ -16,12 +16,11 @@ export default {
 
     let response = await cache.match(cacheKey);
 
-    console.log({
-      cacheHit: response,
-    });
-
     if ( !response ) {
+      console.log('no previous conversion');
       response = await handleRequest(request, env);
+    } else {
+      console.log('has previous conversion');
     }
 
     const newResponse = new Response(response.body, response);
@@ -84,9 +83,7 @@ async function handleRequest(request, env) {
     options.cf.image.format = 'webp';
   }
 
-  console.log({
-    output: options.cf.image.format,
-  })
+  console.log(`convert to ${options.cf.image.format}`)
 
   const imageURL = url.toString();
 
