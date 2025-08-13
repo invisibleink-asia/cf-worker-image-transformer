@@ -90,7 +90,10 @@ async function handleRequest(request, env) {
   console.log(`convert to ${options.cf.image.format}`)
 
   const imageRequest = new Request( imageURL, {
-    headers: request.headers
+    headers: {
+      ...request.headers,
+      'Content-Type': `image/${options.cf.image.format}`,
+    }
   } );
 
   return fetch(imageRequest, options);
