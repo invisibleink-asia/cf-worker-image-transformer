@@ -47,7 +47,7 @@ async function handleRequest(request, env) {
 
   url.hostname = env.IMG_HOST;
 
-  if ( !/\.(jpg|jpeg|png|gif|webp|ico)$/i.test(url.pathname) ) {
+  if ( !/\.(jpg|jpeg|png|gif)$/i.test(url.pathname) ) {
     return fetch( url.toString() , {
       cacheTtl: 86400,
       cacheEverything: true,
