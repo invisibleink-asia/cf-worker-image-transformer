@@ -7,6 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 IMG_HOST = "static.monsoontea.co.th"
 
-[observability]
+[observability.logs]
 enabled = true
-head_sampling_rate = 1

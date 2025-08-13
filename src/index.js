@@ -17,10 +17,7 @@ export default {
     let response = await cache.match(cacheKey);
 
     if ( !response ) {
-      console.log('no previous conversion');
       response = await handleRequest(request, env);
-    } else {
-      console.log('has previous conversion');
     }
 
     const newResponse = new Response(response.body, response);
@@ -60,6 +57,8 @@ async function handleRequest(request, env) {
   }
 
   url.pathname = pathFragments.join('/');
+
+  console.log(`path: ${url.pathname}`)
 
   // Cloudflare-specific options are in the cf object.
   options.cacheTtl = 86400;
