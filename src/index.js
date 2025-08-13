@@ -24,8 +24,13 @@ export default {
 
     const newResponse = new Response(response.body, response);
 
+    console.log({
+      'image_response': response,
+    })
+
     newResponse.headers.append( "x-workers-hello", "WP63" );
     newResponse.headers.append( "Cache-Control", "86400" );
+    // newResponse.headers.set( "Content-Type", "86400" );
 
     return newResponse;
   },
@@ -90,10 +95,7 @@ async function handleRequest(request, env) {
   console.log(`convert to ${options.cf.image.format}`)
 
   const imageRequest = new Request( imageURL, {
-    headers: {
-      ...request.headers,
-      'Content-Type': `image/${options.cf.image.format}`,
-    }
+    headers: request.headers
   } );
 
   return fetch(imageRequest, options);
