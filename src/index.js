@@ -16,6 +16,10 @@ export default {
 
     let response = await cache.match(cacheKey);
 
+    console.log({
+      cacheHit: response,
+    });
+
     if ( !response ) {
       response = await handleRequest(request, env);
     }
@@ -79,6 +83,10 @@ async function handleRequest(request, env) {
   } else if ( /image\/webp/.test(accept) ) {
     options.cf.image.format = 'webp';
   }
+
+  console.log({
+    output: options.cf.image.format,
+  })
 
   const imageURL = url.toString();
 
