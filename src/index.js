@@ -14,13 +14,11 @@ export default {
 
     const cacheKey = new Request(request.url, request);
 
-    // let response = await cache.match(cacheKey);
+    let response = await cache.match(cacheKey);
 
-    // if ( !response ) {
-    //   response = await handleRequest(request, env);
-    // }
-
-    let response = await handleRequest(request, env);
+    if ( !response ) {
+      response = await handleRequest(request, env);
+    }
 
     const newResponse = new Response(response.body, response);
 
