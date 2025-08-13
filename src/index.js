@@ -25,12 +25,12 @@ export default {
     const newResponse = new Response(response.body, response);
 
     console.log({
-      'image_response': response,
+      'response_type': response.headers.get('Content-Type'),
     })
 
     newResponse.headers.append( "x-workers-hello", "WP63" );
     newResponse.headers.append( "Cache-Control", "86400" );
-    // newResponse.headers.set( "Content-Type", "86400" );
+    newResponse.headers.set( "Content-Type", response.headers.get('Content-Type') );
 
     return newResponse;
   },
