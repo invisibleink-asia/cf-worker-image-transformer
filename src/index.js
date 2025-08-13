@@ -74,7 +74,7 @@ async function handleRequest(request, env) {
     image: {}
   };
 
-  options.cf.image.quality = 90;
+  options.cf.image.quality = 85;
 
   if ( dimension ) {
     options.cf.image.width = dimension[2];
